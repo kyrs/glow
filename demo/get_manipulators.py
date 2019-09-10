@@ -25,7 +25,7 @@ def get_aligned(img_paths):
 
 # Input data. 30000 aligned images of shape 256x256x3
 # x = get_aligned(img_paths)
-x = np.load('x.npy')
+x = np.load('/mnt/shubham/glow_model/x.npy')
 print("Loaded inputs")
 
 # Encode all inputs
@@ -39,11 +39,11 @@ def get_z(x):
     return z
 
 # z = get_z(x)
-z = np.load('z.npy')
+z = np.load('/mnt/shubham/glow_model/z.npy')
 print("Got encodings")
 
 # Get manipulation vector based on attribute
-attr = np.load('attr.npy')
+attr = np.load('/mnt/shubham/glow_model/attr.npy')
 
 def get_manipulator(index):
     z_pos = [z[i] for i in range(len(x)) if attr[i][index] == 1]
@@ -59,4 +59,4 @@ _TAGS = _TAGS.split()
 z_manipulate = [get_manipulator(i) for i in range(len(_TAGS))]
 z_manipulate = 1.6 * np.array(z_manipulate, dtype=np.float32)
 print("Got manipulators")
-np.save('z_manipulate.npy', z_manipulate)
+np.save('/mnt/shubham/glow_model/z_manipulate.npy', z_manipulate)

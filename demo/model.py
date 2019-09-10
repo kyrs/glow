@@ -22,7 +22,7 @@ def tensorflow_session():
     return sess
 
 
-optimized = True
+optimized = False
 if optimized:
     # Optimized model. Twice as fast as
     # 1. we freeze conditional network (label is always 0)
@@ -106,7 +106,7 @@ eps_shapes = [(128, 128, 6), (64, 64, 12), (32, 32, 24),
               (16, 16, 48), (8, 8, 96), (4, 4, 384)]
 eps_sizes = [np.prod(e) for e in eps_shapes]
 eps_size = 256 * 256 * 3
-z_manipulate = np.load('z_manipulate.npy')
+z_manipulate = np.load('/mnt/shubham/glow_model/z_manipulate.npy')
 
 _TAGS = "5_o_Clock_Shadow Arched_Eyebrows Attractive Bags_Under_Eyes Bald Bangs Big_Lips Big_Nose Black_Hair Blond_Hair Blurry Brown_Hair Bushy_Eyebrows Chubby Double_Chin Eyeglasses Goatee Gray_Hair Heavy_Makeup High_Cheekbones Male Mouth_Slightly_Open Mustache Narrow_Eyes No_Beard Oval_Face Pale_Skin Pointy_Nose Receding_Hairline Rosy_Cheeks Sideburns Smiling Straight_Hair Wavy_Hair Wearing_Earrings Wearing_Hat Wearing_Lipstick Wearing_Necklace Wearing_Necktie Young"
 _TAGS = _TAGS.split()
@@ -235,6 +235,7 @@ def test():
     t = time.time()
     for _ in tqdm(range(10)):
         eps = encode(img)
+    print(eps.shape)
     print("Encoding latency {} sec/img".format((time.time() - t) / (1 * 10)))
 
     # Decoding speed
@@ -245,7 +246,8 @@ def test():
     print("Decoding latency {} sec/img".format((time.time() - t) / (1 * 10)))
     img = Image.fromarray(dec[0])
     img.save('test/dec.png')
-
+    print (dec[0].shape)
+    print(img.size)
     # Manipulation
     dec, _ = manipulate(eps, _TAGS.index('Smiling'), 0.66)
     img = Image.fromarray(dec[0])
