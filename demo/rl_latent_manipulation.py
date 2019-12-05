@@ -21,10 +21,11 @@ def get(name):
 def tensorflow_session():
 	# Init session and params
 	config = tf.ConfigProto()
-	config.gpu_options.allow_growth = True
+	# config.gpu_options.allow_growth = True
 	# Pin GPU to local rank (one GPU per process)
-	config.gpu_options.visible_device_list = str(0)
-	sess = tf.Session(config=config)
+	# config.gpu_options.visible_device_list = str(0)
+	gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
+	sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 	return sess
 
 
@@ -90,6 +91,7 @@ with tf.gfile.GFile(graph_path, 'rb') as f:
 	graph_def_optimized = tf.GraphDef()
 	graph_def_optimized.ParseFromString(f.read())
 
+# gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
 sess = tensorflow_session()
 tf.import_graph_def(graph_def_optimized)
 
@@ -294,12 +296,16 @@ def action_rl(emb,attr_tup,img_flag=True):
 	attr_tup  : tuple of (attribute tag to modify, corresponding value to modify with) : (str,float)
 	img_flag  : whether you want a decoded image as an output : boolean
 	"""
-	print("loaded attr value",attr_tup)
-	tag,value = attr_tup
-	dec, _ = manipulate(emb, _TAGS.index(tag), value)
+	# print("loaded attr value",attr_tup)
+	# tag,value = attr_tup
+	# dec, _ = manipulate(emb, _TAGS.index(tag), value)
 
+	dec = decode(emb)
 	if img_flag:
 		img = Image.fromarray(dec[0])
 		return dec,img
 	else:
 		return dec,None
+
+if __name__ =="__main__":
+	print(len(_TAGS))
